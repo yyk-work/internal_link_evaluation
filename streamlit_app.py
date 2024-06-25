@@ -64,7 +64,7 @@ df['Anchor'].fillna('missing anchor', inplace=True)
 df['Status Code'].fillna('none', inplace=True)
 
 # Display the DataFrame
-    st.write("Test!")
+st.write(df)
 
 st.write(
     "Here we are at the end of getting started with streamlit! Happy Streamlit-ing! :balloon:"
