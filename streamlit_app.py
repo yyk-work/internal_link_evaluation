@@ -10,6 +10,18 @@ st.write(
     "how to make an interactive data annotation app in streamlit in 5 min!"
 )
 
+# Upload a CSV file
+uploaded_file = st.file_uploader("Choose a CSV file", type=['csv'])
+
+# If a file is uploaded
+if uploaded_file is not None:
+    # Read the CSV file into a DataFrame
+    dataframe = pd.read_csv(uploaded_file)
+    
+    # Display the DataFrame
+    st.write("Uploaded file name:", uploaded_file.name)
+    st.write(dataframe)
+
 st.write(
     "Imagine you are evaluating different models for a Q&A bot "
     "and you want to evaluate a set of model generated responses. "
