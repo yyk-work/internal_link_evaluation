@@ -15,82 +15,56 @@ uploaded_file = st.file_uploader("Choose a CSV file", type=['csv'])
 if uploaded_file is not None:
     # Read the CSV file into a DataFrame
     dataframe = pd.read_csv(uploaded_file)
-    
-    # Display the DataFrame
+
     st.write("Uploaded file name:", uploaded_file.name)
-    st.write(dataframe)
 
 df = dataframe
 
-st.write(df)
+# classify rows
+def classify_links(source, destination, anchor, similarity, similiarity_cleaned):
+    match (source, destination, anchor, similarity, similiarity_cleaned):
+        #case _ if len(anchor) <= 5:
+            #return 'Short Anchor'
+        case _ if 'encoded' in destination:
+            return 'Encoded Link'
+        case _ if 'encoded' in source:
+            return 'Encoded Link'
+        case _ if 'v_' in destination:
+            return 'Filter Link'
+        case _ if 'google' in destination:
+            return 'Google Link'
+        case _ if 'pdf' in destination:
+            return 'PDF Link'
+        case _ if 'media' in destination:
+            return 'Media Link'
+        case _ if similiarity_cleaned < 20:
+            return 'No Match'
+        case _ if similarity > 98:
+            return 'Complete Match'
+        case _ if 20 <= similiarity_cleaned < 60:
+            return 'Bad Match'
+        case _ if similiarity_cleaned >= 60:
+            return 'Good Match'
+        case _ if source == destination:
+            return 'Anchor Link'
+        case _:
+            return 'Other'
 
-st.write(
-    "Now I want to evaluate the responses from my model. "
-    "One way to achieve this is to use the very powerful `st.data_editor` feature. "
-    "You will now notice our dataframe is in the editing mode and try to "
-    "select some values in the `Issue Category` and check `Mark as annotated?` once finished 👇"
-)
+# clean dataframe
+df['Source'] = df['Source'].astype('string')
+df['Destination'] = df['Destination'].astype('string')
+df['Anchor'] = df['Anchor'].astype('string')
+df['Status Code'] = df['Status Code'].astype('string')
+df['Follow'] = df['Follow'].astype('string')
+df['Link Position'] = df['Link Position'].astype('string')
 
-df["Issue"] = [True, True, True, False]
-df["Category"] = ["Accuracy", "Accuracy", "Completeness", ""]
+df = df[df['Type'] == 'Hyperlink']
+df = df.filter(items = ['Source', 'Destination', 'Anchor', 'Status Code', 'Follow', 'Link Position'])
+df['Anchor'].fillna('missing anchor', inplace=True)
+df['Status Code'].fillna('none', inplace=True)
 
-new_df = st.data_editor(
-    df,
-    column_config={
-        "Questions": st.column_config.TextColumn(width="medium", disabled=True),
-        "Answers": st.column_config.TextColumn(width="medium", disabled=True),
-        "Issue": st.column_config.CheckboxColumn("Mark as annotated?", default=False),
-        "Category": st.column_config.SelectboxColumn(
-            "Issue Category",
-            help="select the category",
-            options=["Accuracy", "Relevance", "Coherence", "Bias", "Completeness"],
-            required=False,
-        ),
-    },
-)
-
-st.write(
-    "You will notice that we changed our dataframe and added new data. "
-    "Now it is time to visualize what we have annotated!"
-)
-
-st.divider()
-
-st.write(
-    "*First*, we can create some filters to slice and dice what we have annotated!"
-)
-
-col1, col2 = st.columns([1, 1])
-with col1:
-    issue_filter = st.selectbox("Issues or Non-issues", options=new_df.Issue.unique())
-with col2:
-    category_filter = st.selectbox(
-        "Choose a category",
-        options=new_df[new_df["Issue"] == issue_filter].Category.unique(),
-    )
-
-st.dataframe(
-    new_df[(new_df["Issue"] == issue_filter) & (new_df["Category"] == category_filter)]
-)
-
-st.markdown("")
-st.write(
-    "*Next*, we can visualize our data quickly using `st.metrics` and `st.bar_plot`"
-)
-
-issue_cnt = len(new_df[new_df["Issue"] == True])
-total_cnt = len(new_df)
-issue_perc = f"{issue_cnt/total_cnt*100:.0f}%"
-
-col1, col2 = st.columns([1, 1])
-with col1:
-    st.metric("Number of responses", issue_cnt)
-with col2:
-    st.metric("Annotation Progress", issue_perc)
-
-df_plot = new_df[new_df["Category"] != ""].Category.value_counts().reset_index()
-
-st.bar_chart(df_plot, x="Category", y="count")
+# Display the DataFrame
+    st.write(df)
 
 st.write(
     "Here we are at the end of getting started with streamlit! Happy Streamlit-ing! :balloon:"
