@@ -34,6 +34,7 @@ df = df[df['Type'] == 'Hyperlink']
 df = df.filter(items = ['Source', 'Destination', 'Anchor', 'Status Code', 'Follow', 'Link Position'])
 df['Anchor'].fillna('missing anchor', inplace=True)
 df['Status Code'].fillna('none', inplace=True)
+df = df[df['Link Position'] == 'Content']
 
 # Display the DataFrame
 st.write(df)
