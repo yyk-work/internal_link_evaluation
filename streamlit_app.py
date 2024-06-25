@@ -10,34 +10,28 @@ st.write(
     "This app helps to evaluate internal links on a website "
 )
 
-# Upload a CSV file
-uploaded_file = st.file_uploader("Choose a CSV file", type=['csv'])
+# Upload a CSV file containing edges (assuming 'Source' and 'Destination' columns)
+uploaded_file = st.file_uploader("Upload a CSV file with 'Source' and 'Destination' columns", type=['csv'])
 
 # If a file is uploaded
 if uploaded_file is not None:
     # Read the CSV file into a DataFrame
-    dataframe = pd.read_csv(uploaded_file)
+    edges_df = pd.read_csv(uploaded_file)
 
-    st.write("Uploaded file name:", uploaded_file.name)
+    # Create a directed graph (DiGraph)
+    G = nx.DiGraph()
 
-df = dataframe
+    # Add edges from the DataFrame
+    edges = [(row['Source'], row['Destination']) for _, row in edges_df.iterrows()]
+    G.add_edges_from(edges)
 
-# clean dataframe
-df['Source'] = df['Source'].astype('string')
-df['Destination'] = df['Destination'].astype('string')
-df['Anchor'] = df['Anchor'].astype('string')
-df['Status Code'] = df['Status Code'].astype('string')
-df['Follow'] = df['Follow'].astype('string')
-df['Link Position'] = df['Link Position'].astype('string')
+    # Calculate PageRank
+    pagerank = nx.pagerank(G)
 
-df = df[df['Type'] == 'Hyperlink']
-df = df.filter(items = ['Source', 'Destination', 'Anchor', 'Status Code', 'Follow', 'Link Position'])
-df['Anchor'].fillna('missing anchor', inplace=True)
-df['Status Code'].fillna('none', inplace=True)
-df = df[df['Link Position'] == 'Content']
-
-# Display the DataFrame
-st.write(df)
+    # Display PageRank scores
+    st.write("PageRank scores:")
+    for node, score in pagerank.items():
+        st.write(f"{node}: {score:.4f}")
 
 
 
