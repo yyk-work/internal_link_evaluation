@@ -25,6 +25,10 @@ if uploaded_file is not None:
     # Create a DataFrame from the pagerank dictionary
     pagerank_df = pd.DataFrame(pagerank.items(), columns=['Node', 'Score'])
 
+    # Display the DataFrame
+    st.write("PageRank scores:")
+    st.write(pagerank_df)
+
     # Create csv
     csv_file_path = "pagerank_scores.csv"
     pagerank_df.to_csv(csv_file_path)
