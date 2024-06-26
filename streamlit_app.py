@@ -30,6 +30,7 @@ if uploaded_file is not None:
     pagerank = nx.pagerank(G)
 
     # Create a CSV file for download
+    # Create a CSV file for download
     csv_file_path = "pagerank_scores.csv"
     with open(csv_file_path, "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
