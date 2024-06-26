@@ -29,16 +29,7 @@ if uploaded_file is not None:
     st.write("PageRank scores:")
     st.write(pagerank_df)
 
-    # Create csv
-    csv_file_path = "pagerank_scores.csv"
-    pagerank_df.to_csv(csv_file_path)
-
-    # Provide a download link
-    st.download_button("Download CSV", csv_file_path, file_name="pagerank_scores.csv", key="download_button")
 
 
-
-st.write(
-    "Here we are at the end of getting started with streamlit! Happy Streamlit-ing! :balloon:"
-)
+st.write("More options for analysis will be added in the future.")
 
