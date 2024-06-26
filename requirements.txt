@@ -1,2 +1,2 @@
 streamlit
-pip install streamlit networkx
+pip install networkx
