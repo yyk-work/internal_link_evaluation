@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import networkx as nx
+import csv
 
 
 
@@ -28,10 +29,15 @@ if uploaded_file is not None:
     # Calculate PageRank
     pagerank = nx.pagerank(G)
 
-    # Display PageRank scores
-    st.write("PageRank scores:")
-    for node, score in pagerank.items():
-        st.write(f"{node}: {score:.4f}")
+    # Create a CSV file for download
+    csv_file_path = "pagerank_scores.csv"
+    with open(csv_file_path, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["Node", "Score"])  # Write header
+        writer.writerows(pagerank.items())  # Write data rows
+
+    # Provide a download link
+    st.markdown(f"Download CSV")
 
 
 
