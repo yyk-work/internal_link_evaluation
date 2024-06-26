@@ -37,7 +37,7 @@ if uploaded_file is not None:
         writer.writerows(pagerank.items())  # Write data rows
 
     # Provide a download link
-    st.markdown(f"Download CSV")
+    st.download_button("Download CSV", csv_file_path, file_name="pagerank_scores.csv", key="download_button")
 
 
 
