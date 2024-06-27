@@ -25,9 +25,12 @@ if uploaded_file is not None:
     # Create a DataFrame from the pagerank dictionary
     pagerank_df = pd.DataFrame(pagerank.items(), columns=['Node', 'Score'])
 
+    normalized_df=(pagerank_df-pagerank_df.mean())/pagerank_df.std()
+
     # Display the DataFrame
     st.write("PageRank scores:")
     st.write(pagerank_df)
+    st.write(normalized_df)
 
 
 
